@@ -1,0 +1,74 @@
+2020-12-04 17:12:52 | loading vocab...
+2020-12-04 17:12:52 | read info.txt
+2020-12-04 17:12:52 | Build test data Processor
+2020-12-04 17:12:52 | building model...
+2020-12-04 17:12:52 | From D:\git_depository\Bilstm_ner_depository\model_lstm_crf.py:14: The name tf.placeholder is deprecated. Please use tf.compat.v1.placeholder instead.
+
+2020-12-04 17:12:52 | From D:\git_depository\Bilstm_ner_depository\model_lstm_crf.py:18: The name tf.variable_scope is deprecated. Please use tf.compat.v1.variable_scope instead.
+
+2020-12-04 17:12:52 | From D:\git_depository\Bilstm_ner_depository\model_lstm_crf.py:20: The name tf.get_variable is deprecated. Please use tf.compat.v1.get_variable instead.
+
+2020-12-04 17:12:52 | From D:\git_depository\Bilstm_ner_depository\model_lstm_crf.py:26: LSTMCell.__init__ (from tensorflow.python.ops.rnn_cell_impl) is deprecated and will be removed in a future version.
+Instructions for updating:
+This class is equivalent as tf.keras.layers.LSTMCell, and will be replaced by that in Tensorflow 2.0.
+2020-12-04 17:12:52 | From D:\git_depository\Bilstm_ner_depository\model_lstm_crf.py:33: bidirectional_dynamic_rnn (from tensorflow.python.ops.rnn) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please use `keras.layers.Bidirectional(keras.layers.RNN(cell))`, which is equivalent to this API
+2020-12-04 17:12:52 | From D:\python_project\venv\lib\site-packages\tensorflow_core\python\ops\rnn.py:464: dynamic_rnn (from tensorflow.python.ops.rnn) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please use `keras.layers.RNN(cell)`, which is equivalent to this API
+2020-12-04 17:12:52 | From D:\python_project\venv\lib\site-packages\tensorflow_core\python\ops\rnn_cell_impl.py:958: Layer.add_variable (from tensorflow.python.keras.engine.base_layer) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please use `layer.add_weight` method instead.
+2020-12-04 17:12:52 | From D:\python_project\venv\lib\site-packages\tensorflow_core\python\ops\rnn_cell_impl.py:962: calling Zeros.__init__ (from tensorflow.python.ops.init_ops) with dtype is deprecated and will be removed in a future version.
+Instructions for updating:
+Call initializer instance with the dtype argument instead of passing it to the constructor
+2020-12-04 17:12:52 | From D:\python_project\venv\lib\site-packages\tensorflow_core\python\ops\rnn.py:244: where (from tensorflow.python.ops.array_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.where in 2.0, which has the same broadcast rule as np.where
+2020-12-04 17:12:52 | From D:\git_depository\Bilstm_ner_depository\model_lstm_crf.py:39: dense (from tensorflow.python.layers.core) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use keras.layers.Dense instead.
+2020-12-04 17:12:52 | From D:\python_project\venv\lib\site-packages\tensorflow_core\python\layers\core.py:187: Layer.apply (from tensorflow.python.keras.engine.base_layer) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please use `layer.__call__` method instead.
+2020-12-04 17:12:52 | 
+The TensorFlow contrib module will not be included in TensorFlow 2.0.
+For more information, please see:
+  * https://github.com/tensorflow/community/blob/master/rfcs/20180907-contrib-sunset.md
+  * https://github.com/tensorflow/addons
+  * https://github.com/tensorflow/io (for I/O related ops)
+If you depend on functionality not listed there, please file an issue.
+
+2020-12-04 17:12:53 | From D:\git_depository\Bilstm_ner_depository\model_lstm_crf.py:61: The name tf.train.AdamOptimizer is deprecated. Please use tf.compat.v1.train.AdamOptimizer instead.
+
+2020-12-04 17:12:54 | model params:
+2020-12-04 17:12:54 | From D:/git_depository/Bilstm_ner_depository/train_lstm_crf.py:82: The name tf.trainable_variables is deprecated. Please use tf.compat.v1.trainable_variables instead.
+
+2020-12-04 17:12:54 | 	 embedding_layer/embedding_matrix:0 (4295, 300) 1288500
+2020-12-04 17:12:54 | 	 encoder/bidirectional_rnn/fw/lstm_cell/kernel:0 (600, 1200) 720000
+2020-12-04 17:12:54 | 	 encoder/bidirectional_rnn/fw/lstm_cell/bias:0 (1200,) 1200
+2020-12-04 17:12:54 | 	 encoder/bidirectional_rnn/bw/lstm_cell/kernel:0 (600, 1200) 720000
+2020-12-04 17:12:54 | 	 encoder/bidirectional_rnn/bw/lstm_cell/bias:0 (1200,) 1200
+2020-12-04 17:12:54 | 	 projection/dense/kernel:0 (300, 1001) 300300
+2020-12-04 17:12:54 | 	 projection/dense/bias:0 (1001,) 1001
+2020-12-04 17:12:54 | 	 projection/transitions:0 (1001, 1001) 1002001
+2020-12-04 17:12:54 | all params num: 4034202
+2020-12-04 17:12:54 | start training...
+2020-12-04 17:12:54 | From D:/git_depository/Bilstm_ner_depository/train_lstm_crf.py:96: The name tf.ConfigProto is deprecated. Please use tf.compat.v1.ConfigProto instead.
+
+2020-12-04 17:12:54 | From D:/git_depository/Bilstm_ner_depository/train_lstm_crf.py:101: The name tf.Session is deprecated. Please use tf.compat.v1.Session instead.
+
+2020-12-04 17:12:54 | From D:/git_depository/Bilstm_ner_depository/train_lstm_crf.py:103: The name tf.global_variables_initializer is deprecated. Please use tf.compat.v1.global_variables_initializer instead.
+
+2020-12-04 17:12:54 | From D:/git_depository/Bilstm_ner_depository/train_lstm_crf.py:104: The name tf.train.Saver is deprecated. Please use tf.compat.v1.train.Saver instead.
+
+2020-12-04 17:12:54 | ###### shape of a batch #######
+2020-12-04 17:12:54 | input_seq: (32, 99)
+2020-12-04 17:12:54 | input_seq_len: (32,)
+2020-12-04 17:12:54 | output_seq: (32, 99)
+2020-12-04 17:12:54 | ###### preview a sample #######
+2020-12-04 17:12:54 | input_seq:啄 木 鸟 钥 匙 包 男 女 通 用 款 头 层 牛 皮 零 钱 包 多 功 能 情 侣 短 款 牛 皮 钱 包 潮 [SPA] 黑 色 [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD]
+2020-12-04 17:12:54 | input_seq_len :33
+2020-12-04 17:12:54 | output_seq: B-品牌 I-品牌 I-品牌 B-品类 I-品类 I-品类 O O O O O O O B-材质 I-材质 O O O O O O O O O O B-材质 I-材质 O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O
+2020-12-04 17:12:54 | ###############################

@@ -16,9 +16,12 @@ class MyModel(object):
         self.outputs_seq = tf.placeholder(tf.int32, [None, None], name='outputs_seq')
         
         with tf.variable_scope('embedding_layer'):
+
             embedding_matrix = tf.get_variable("embedding_matrix", [vocab_size_char, embedding_dim], dtype=tf.float32)
+
             embedded = tf.nn.embedding_lookup(embedding_matrix, self.inputs_seq)
-        
+
+        # 编码
         with tf.variable_scope('encoder'):
             cell_fw = tf.nn.rnn_cell.LSTMCell(hidden_dim)
             cell_bw = tf.nn.rnn_cell.LSTMCell(hidden_dim)
@@ -30,7 +33,8 @@ class MyModel(object):
                 dtype=tf.float32
             )
             rnn_outputs = tf.add(rnn_fw_outputs, rnn_bw_outputs) # B * S1 * D
-        
+
+        #
         with tf.variable_scope('projection'):
             logits_seq = tf.layers.dense(rnn_outputs, vocab_size_bio) # B * S * V
             probs_seq = tf.nn.softmax(logits_seq)
