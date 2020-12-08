@@ -122,6 +122,18 @@ if __name__ == "__main__":
 
     w2i_char, i2w_char = load_vocabulary(Configs.char_vocab_path)
 
+    try:
+        pad_index = w2i_char["[PAD]"]
+        Configs.padding_id = pad_index
+    except:
+        pad_index = -1
+
+    if pad_index == -1:
+        logger.info("PAD is not in the vocab")
+        exit(1)
+
+    # add padding
+
     w2i_bio, i2w_bio = load_vocabulary(Configs.label_vocab_path)
 
     Configs.w2i_char = w2i_char
@@ -144,7 +156,8 @@ if __name__ == "__main__":
 
     logger.info("building model...")
 
-    model = MyModel(embedding_dim=Configs.embedding_dim,
+    model = MyModel(Configs.padding_id,
+                    embedding_dim=Configs.embedding_dim,
                     hidden_dim=Configs.hidden_dim,
                     vocab_size_char=len(w2i_char),
                     vocab_size_bio=len(w2i_bio),
@@ -229,14 +242,14 @@ if __name__ == "__main__":
 
                 # 这次run要占用很大内存,能从4个飙升到11G多，然后再回来
                 # 4.8 G 飙升到 15.8G
-                loss, _, global_step, train_loss_sum = sess.run([model.loss,
+                loss, _, global_steps, train_loss_sum = sess.run([model.loss,
                                                  model.train_op,
                                                  model.global_step,
                                                  merged_summary_op],
                                                 feed_dict)
 
                 logger.info("tensorboard visual")
-                train_writer.add_summary(train_loss_sum, global_step)
+                train_writer.add_summary(train_loss_sum, global_steps)
 
                 print("loss start !!!")
 
@@ -261,10 +274,17 @@ if __name__ == "__main__":
 
                     # valid(model,data_processor, i2w_bio, i2w_char, max_batches=None, batch_size=1024)
                     # 3.2 G ---
-                    p, r, f1 = valid(model, sess, global_step, data_processor_valid, i2w_bio, i2w_char, max_batches=10)
+                    p, r, f1 = valid(model,
+                                     sess,
+                                     global_steps,
+                                     data_processor_valid,
+                                     i2w_bio,
+                                     i2w_char,
+                                     max_batches=10,
+                                     batch_size=Configs.test_batch_size)
 
                     # 在这一步骤一直超过内存
-                    saver.save(sess, ckpt_save_path)
+                    saver.save(sess, ckpt_save_path, global_step=global_steps)
 
                     if f1 > best_f1:
                         best_f1 = f1

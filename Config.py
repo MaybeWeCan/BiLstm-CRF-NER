@@ -25,12 +25,13 @@ class Config:
 
 
         ''' Train model'''
-        self.log_file_path = "./ckpt/train_lstm_crf.log"
+        self.log_file_path = "./log/train_lstm_crf.log"
         self.train_tenboard_dir = './tensorboard/logs/train'
         self.val_tenboard_dir = './tensorboard/logs/val'
         self.max_to_keep = 5
         self.batch_size = 32
         self.epoches = 20
+        self.test_batch_size = 64
 
         self.save_batch = 2
 
@@ -41,6 +42,7 @@ class Config:
         # self.vocab_size_char = -1
         # self.vocab_size_bio = -1
         self.use_crf = True
+        self.padding_id=-1
 
         self.ckpt_save_dir = "./ckpt/"
 
