@@ -14,6 +14,8 @@ class MyModel(object):
         self.inputs_seq = tf.placeholder(tf.int32, [None, None], name="inputs_seq")
         self.inputs_seq_len = tf.placeholder(tf.int32, [None], name="inputs_seq_len")
         self.outputs_seq = tf.placeholder(tf.int32, [None, None], name='outputs_seq')
+
+        self.global_step = tf.Variable(0, trainable=False)
         
         with tf.variable_scope('embedding_layer'):
 
@@ -42,8 +44,8 @@ class MyModel(object):
             if not use_crf:
                 preds_seq = tf.argmax(probs_seq, axis=-1, name="preds_seq") # B * S
             else:
-                log_likelihood, transition_matrix = tf.contrib.crf.crf_log_likelihood(logits_seq, self.outputs_seq, self.inputs_seq_len)
-                preds_seq, crf_scores = tf.contrib.crf.crf_decode(logits_seq, transition_matrix, self.inputs_seq_len)
+                log_likelihood, self.transition_matrix = tf.contrib.crf.crf_log_likelihood(logits_seq, self.outputs_seq, self.inputs_seq_len)
+                preds_seq, crf_scores = tf.contrib.crf.crf_decode(logits_seq, self.transition_matrix, self.inputs_seq_len)
             
         self.outputs = preds_seq
         
@@ -58,7 +60,7 @@ class MyModel(object):
         self.loss = tf.reduce_mean(loss)
         
         with tf.variable_scope('opt'):
-            self.train_op = tf.train.AdamOptimizer().minimize(loss)
+            self.train_op = tf.train.AdamOptimizer().minimize(loss,global_step=self.global_step)
 
 
     
