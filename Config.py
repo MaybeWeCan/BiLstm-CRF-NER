@@ -26,6 +26,7 @@ class Config:
 
         ''' Train model'''
         self.log_file_path = "./log/train_lstm_crf.log"
+        self.debug_log_file_path = "./log/debug_lstm_crf.log"
         self.train_tenboard_dir = './tensorboard/logs/train'
         self.val_tenboard_dir = './tensorboard/logs/val'
         self.max_to_keep = 5

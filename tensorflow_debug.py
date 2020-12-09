@@ -1,68 +1,174 @@
+import logging
 import tensorflow as tf
-from tensorflow.examples.tutorials.mnist import input_data
+from tensorflow.python import debug as tf_debug
+import numpy as np
+import os
 
-# Only log errors (to prevent unnecessary cluttering of the console)
-tf.logging.set_verbosity(tf.logging.ERROR)
-
-# We use the TF helper function to pull down the data from the MNIST site
-mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
-
-# x is the placeholder for the 28 x 28 image data (the input)
-# y_ is a 10 element vector, containing the predicted probability of each digit (0-9) class
-# Define the weights and balances (always keep the dimensions in mind)
-x = tf.placeholder(tf.float32, shape=[None, 784], name="x_placeholder")
-y_ = tf.placeholder(tf.float32, shape=[None, 10], name="y_placeholder")
-
-W = tf.Variable(tf.zeros([784, 10]), name="weights_variable")
-b = tf.Variable(tf.zeros([10]), name="bias_variable")
+from model_lstm_crf import MyModel
+from utils import DataProcessor_LSTM as DataProcessor
+from utils import load_vocabulary
+from utils import extract_kvpairs_in_bio
+from utils import cal_f1_score
+from utils import get_batch
+from utils import read_info
+from Config import Config
 
 
-# Define the activation function = the real y. Do not use softmax here, as it will be applied in the next step
-assert x.get_shape().as_list() == [None, 784]
-assert y_.get_shape().as_list() == [None, 10]
-assert W.get_shape().as_list() == [784, 10]
-assert b.get_shape().as_list() == [10]
-y = tf.add(tf.matmul(x, W), b)
-
-# Loss is defined as cross entropy between the prediction and the real value
-# Each training step in gradient descent we want to minimize the loss
-loss = tf.reduce_mean(
-    tf.nn.softmax_cross_entropy_with_logits_v2(
-        labels=y_, logits=y, name="lossFunction"
-    ),
-    name="loss",
-)
-train_step = tf.train.GradientDescentOptimizer(0.5).minimize(loss, name="gradDescent")
-
-# Initialize all variables
-
-# Perform the initialization which is only the initialization of all global variables
-init = tf.global_variables_initializer()
-
-# ------ Set Session or InteractiveSession
-sess = tf.InteractiveSession()
-sess.run(init)
-
-# Perform 1000 training steps
-# Feed the next batch and run the training
-for i in range(1000):
-    batch_xs, batch_ys = mnist.train.next_batch(100)
-    sess.run(train_step, feed_dict={x: batch_xs, y_: batch_ys})
-    if i % 20 == 0:
-        # loss = tf.Print(loss, [loss], message="loss")
-        # loss.eval(feed_dict={x: mnist.test.images, y_: mnist.test.labels})
-        print(
-            f"Loss of the model is: {sess.run(loss, feed_dict={x: mnist.test.images, y_: mnist.test.labels})}%"
-        )
+if __name__ == "__main__":
 
 
-# Evaluate the accuracy of the model
-correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
-accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32), name="accuracy")
+    Configs = Config()
 
-print("============================================")
-print(
-    f"Accuracy of the model is: {sess.run(accuracy, feed_dict={x: mnist.test.images, y_: mnist.test.labels})*100}%"
-)
+    if os.path.exists(Configs.debug_log_file_path):
+        os.remove(Configs.debug_log_file_path)
 
-sess.close()
+    #  创建一个logger,默认为root logger
+    logger = logging.getLogger()
+    # 调整终端输出级别,设置全局log级别为INFO。注意全局的优先级最高
+    logger.setLevel(logging.INFO)
+
+    # 日志格式： 日志时间，日志信息，设置时间输出格式
+    formatter = logging.Formatter("%(asctime)s | %(message)s", "%Y-%m-%d %H:%M:%S")
+
+    #  创建一个终端输出的handler
+    chlr = logging.StreamHandler()
+    chlr.setFormatter(formatter)
+
+    #  创建一个文件记录日志的handler
+    fhlr = logging.FileHandler(Configs.debug_log_file_path)
+    fhlr.setFormatter(formatter)
+
+    logger.addHandler(chlr)
+    logger.addHandler(fhlr)
+
+
+    logger.info("loading vocab...")
+
+    w2i_char, i2w_char = load_vocabulary(Configs.char_vocab_path)
+
+    try:
+        pad_index = w2i_char["[PAD]"]
+        Configs.padding_id = pad_index
+    except:
+        pad_index = -1
+
+    if pad_index == -1:
+        logger.info("PAD is not in the vocab")
+        exit(1)
+
+    # add padding
+
+    w2i_bio, i2w_bio = load_vocabulary(Configs.label_vocab_path)
+
+    Configs.w2i_char = w2i_char
+    Configs.w2i_bio = w2i_bio
+
+    logger.info("read info.txt")
+
+    file_length = read_info(Configs.info_txt)
+
+    logging.info("Build test data Processor")
+
+    data_processor_valid = DataProcessor(
+        Configs.test_seq_path,
+        Configs.test_label_path,
+        w2i_char,
+        w2i_bio,
+        shuffling=True
+    )
+
+
+    logger.info("building model...")
+
+    model = MyModel(Configs.padding_id,
+                    embedding_dim=Configs.embedding_dim,
+                    hidden_dim=Configs.hidden_dim,
+                    vocab_size_char=len(w2i_char),
+                    vocab_size_bio=len(w2i_bio),
+                    use_crf=Configs.use_crf)
+
+
+    logger.info("model params:")
+
+    # calculate params
+    params_num_all = 0
+    for variable in tf.trainable_variables():
+        params_num = 1
+
+        # 维度乘积
+        for dim in variable.shape:
+            params_num *= dim
+
+        params_num_all += params_num
+        logger.info("\t {} {} {}".format(variable.name, variable.shape, params_num))
+
+    logger.info("all params num: " + str(params_num_all))
+
+    logger.info("start training...")
+
+    # tf_config = tf.ConfigProto(allow_soft_placement=True)
+    # tf_config.gpu_options.allow_growth = True
+    # with tf.Session(config=tf_config) as sess:
+
+    logger.info("train_writer create")
+
+
+
+    with tf.Session() as sess:
+
+        sess = tf_debug.LocalCLIDebugWrapperSession(sess)
+
+        sess.run(tf.global_variables_initializer())
+
+        losses = []
+        best_f1 = 0
+
+        total_step = 0
+
+        for epoche in range(Configs.epoches):
+
+            batch_iter = get_batch(Configs.write_seq_path,
+                                   Configs.write_label_path,
+                                   16,
+                                   file_length,
+                                   Configs)
+
+            batch_step = 1
+
+            for (inputs_seq_batch, inputs_seq_len_batch, outputs_seq_batch) in batch_iter:
+
+                if batch_step == 1:
+                    logger.info("###### shape of a batch #######")
+                    logger.info("input_seq: " + str(inputs_seq_batch.shape))
+                    logger.info("input_seq_len: " + str(inputs_seq_len_batch.shape))
+                    logger.info("output_seq: " + str(outputs_seq_batch.shape))
+                    logger.info("###### preview a sample #######")
+                    logger.info("input_seq:" + " ".join([i2w_char[i] for i in inputs_seq_batch[0]]))
+                    logger.info("input_seq_len :" + str(inputs_seq_len_batch[0]))
+                    logger.info("output_seq: " + " ".join([i2w_bio[i] for i in outputs_seq_batch[0]]))
+                    logger.info("###############################")
+
+                print("loss compute start !!!")
+
+
+                feed_dict = {
+                    model.inputs_seq: inputs_seq_batch,
+                    model.inputs_seq_len: inputs_seq_len_batch,
+                    model.outputs_seq: outputs_seq_batch
+                }
+
+                # 这次run要占用很大内存,能从4个飙升到11G多，然后再回来
+                # 4.8 G 飙升到 15.8G
+                loss, _, global_steps = sess.run([model.loss,
+                                                 model.train_op,
+                                                 model.global_step],
+                                                feed_dict)
+
+                print("loss start !!!")
+
+
+                losses.append(loss)
+
+                batch_step += 1
+                total_step+= 1
+

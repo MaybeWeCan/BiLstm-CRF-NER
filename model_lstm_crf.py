@@ -68,7 +68,7 @@ class MyModel(object):
 
             # 输出概率
             logits_seq = tf.layers.dense(rnn_outputs, vocab_size_bio) # B * S * V
-            probs_seq = tf.nn.softmax(logits_seq)
+            probs_seq = tf.nn.softmax(logits_seq, name="probs_seq")
             
             if not use_crf:
                 preds_seq = tf.argmax(probs_seq, axis=-1, name="preds_seq") # B * S
@@ -77,11 +77,13 @@ class MyModel(object):
                 # 建层
                 log_likelihood, self.transition_matrix = tf.contrib.crf.crf_log_likelihood(logits_seq, self.outputs_seq, self.inputs_seq_len)
 
-                # 根据矩阵预测最佳结果
                 preds_seq, crf_scores = tf.contrib.crf.crf_decode(logits_seq, self.transition_matrix, self.inputs_seq_len)
 
-        # 最佳结果的预测
-        self.outputs = preds_seq
+        with tf.variable_scope('outputs'):
+            # 最佳结果的预测
+            self.outputs = preds_seq
+
+            # output = tf.Variable(preds_seq, trainable=False, name="output",)
         
         with tf.variable_scope('loss'):
 
@@ -98,7 +100,7 @@ class MyModel(object):
             else:
                 loss = -log_likelihood / tf.cast(self.inputs_seq_len, tf.float32) # B
             
-        self.loss = tf.reduce_mean(loss)
+        self.loss = tf.reduce_mean(loss, name="mean_loss")
         
         with tf.variable_scope('opt'):
             self.train_op = tf.train.AdamOptimizer().minimize(loss,global_step=self.global_step)

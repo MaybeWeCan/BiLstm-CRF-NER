@@ -1,0 +1,3 @@
+model_checkpoint_path: "model.ckpt.batch4-3"
+all_model_checkpoint_paths: "model.ckpt.batch2-1"
+all_model_checkpoint_paths: "model.ckpt.batch4-3"

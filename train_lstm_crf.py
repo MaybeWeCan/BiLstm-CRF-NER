@@ -42,9 +42,7 @@ def valid(model, sess, train_global_step, data_processor, i2w_bio, i2w_char, max
                                                      options=run_options,
                                                      run_metadata=run_metadata)
 
-        # 将节点在运行时的信息写入日志文件
-        print("------------------------------------------------")
-        print("opt writer!!")
+
 
         # tag如果重复会报错
         # train_writer.add_run_metadata(run_metadata, 'step%03d' % train_global_step)
@@ -73,10 +71,16 @@ def valid(model, sess, train_global_step, data_processor, i2w_bio, i2w_char, max
         if (max_batches is not None) and (batches_sample >= max_batches):
             break
 
+    # 将节点在运行时的信息写入日志文件
+    print("------------------------------------------------")
+    print("opt writer!!")
+
     train_writer.add_run_metadata(run_metadata, 'step%03d' % train_global_step)
     test_writer.add_summary(test_loss_sum, test_global_step)
 
+    # 计算f1 score
     p, r, f1 = cal_f1_score(preds_kvpair, golds_kvpair)
+
 
     logger.info("Valid Samples: {}".format(len(preds_kvpair)))
     logger.info("Valid P/R/F1: {} / {} / {}".format(round(p * 100, 2), round(r * 100, 2), round(f1 * 100, 2)))
