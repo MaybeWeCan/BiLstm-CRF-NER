@@ -32,24 +32,24 @@ https://www.cnblogs.com/pycode/p/logging.html
 
 	a.明确指明初始化方式以及初始化公式
 
-# sqrt( 6 / embedding_dim )
-# refer :https://www.dazhuanlan.com/2019/08/17/5d57727232c29/
+#sqrt( 6 / embedding_dim )
+#refer :https://www.dazhuanlan.com/2019/08/17/5d57727232c29/
 r = tf.sqrt(tf.cast(6/embedding_dim,dtype=tf.float32))
 embedding_matrix = tf.get_variable("embedding_matrix",shape=[vocab_size_char, embedding_dim],initializer=tf.random_uniform_initializer(minval=-r,maxval=r),dtype=tf.float32)
 
   b.对padding做0 mask( padding对应的embeeding会被训练，变为不为0的东西，这里把他mask掉)
 
-# build the raw mask array
+#build the raw mask array
 raw_mask_array = [[1.]] * padding_id + [[0.]] + [[1.]] * (vocab_size_char - padding_id - 1)
 
 mask_padding_lookup_table = tf.get_variable("mask_padding_lookup_table",initializer=raw_mask_array,dtype=tf.float32,trainable=False)
 
 embeddeding = tf.nn.embedding_lookup(embedding_matrix, self.inputs_seq)
 
-# refer: https://www.dazhuanlan.com/2019/08/17/5d57727232c29/
+#refer: https://www.dazhuanlan.com/2019/08/17/5d57727232c29/
 mask_padding_input = tf.nn.embedding_lookup(mask_padding_lookup_table, self.inputs_seq)
 
-# the mask-padding-zero embedding
+#the mask-padding-zero embedding
 embedded = tf.multiply(embeddeding, mask_padding_input) # broadcast
 
 
