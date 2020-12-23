@@ -56,19 +56,25 @@ embedded = tf.multiply(embeddeding, mask_padding_input) # broadcast
 ```
 
 (3) tensorboard
+
   对loss做了tensorboard
 
 (4) debug
+
     tensorflow自带的debug不支持win系统
+    
     pycharm debug代码需要包在if __name__ == __main__里
 
 (5) run_meta_option
+
   尝试在dev时加入run_meta，以此打印sess每一个节点的占用空间以及时间（会限制一些训练速度，需要时再添加，个人在另一个数据集上去掉了）
 
 （6）predict.py
+
   加入预测脚本
 
 三、代码
 
     其他细节不再赘述，代码github仓库：
+    
 https://github.com/MaybeWeCan/BiLstm-CRF-NER/tree/master
