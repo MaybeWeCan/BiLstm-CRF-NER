@@ -1,0 +1,6 @@
+model_checkpoint_path: "model.ckpt.batch750-10176"
+all_model_checkpoint_paths: "model.ckpt.batch700-3842"
+all_model_checkpoint_paths: "model.ckpt.batch1550-4692"
+all_model_checkpoint_paths: "model.ckpt.batch700-5413"
+all_model_checkpoint_paths: "model.ckpt.batch1350-7634"
+all_model_checkpoint_paths: "model.ckpt.batch750-10176"

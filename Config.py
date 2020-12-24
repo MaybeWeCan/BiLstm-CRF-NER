@@ -6,22 +6,36 @@ class Config:
         self.w2i_bio = {}
 
         ''' Prepaer train data '''
-        self.char_vocab_path = "./data/vocab_char.txt"
-        self.label_vocab_path = "./data/vocab_bioattr.txt"
 
-        self.seq_path = "./data/train/input.seq.char"
-        self.label_path = "./data/train/output.seq.bioattr"
+        self.dev_number = 5000
 
-        self.write_seq_path = "./data/train/output_seq.txt"
-        self.write_label_path = "./data/train/output_label.txt"
+        self.data_dir = "./data_2/"
+        self.vocab_dir = self.data_dir + "vocab/"
+        self.train_dir = self.data_dir + "train/"
+        self.dev_dir = self.data_dir + "dev/"
+        self.prepare_dir = self.data_dir + "prepare_data/"
+
+        self.inital_data = self.data_dir+"dh_msra.txt"
+
+        self.char_vocab_path = self.vocab_dir + "char_vocab.txt"
+        self.label_vocab_path = self.vocab_dir + "label_vocab.txt"
+
+        self.write_seq_path = self.prepare_dir + "prepare_seq.txt"
+        self.write_label_path = self.prepare_dir + "prepare_label.txt"
+
+
+        self.train_seq_path = self.train_dir + "train_seq.txt"
+        self.train_label_path = self.train_dir + "train_label.txt"
+
+        self.train_shuffle_seq_path = self.train_dir + "shuffle_train_seq.txt"
+        self.train_shuffle_label_path = self.train_dir + "shuffle_train_label.txt"
+
+        self.test_seq_path = self.dev_dir + "dev_seq.txt"
+        self.test_label_path = self.dev_dir + "dev_label.txt"
 
         self.info_txt = "info.txt"
+
         self.workers = 4
-
-        ''' Prepaer test data '''
-
-        self.test_seq_path = "./data/test/input.seq.char"
-        self.test_label_path = "./data/test/output.seq.bioattr"
 
 
         ''' Train model'''
@@ -32,9 +46,10 @@ class Config:
         self.max_to_keep = 5
         self.batch_size = 32
         self.epoches = 20
-        self.test_batch_size = 64
+        # self.test_batch_size = 64
 
-        self.save_batch = 2
+        self.save_batch = 50
+        self.threshold_save = 0.01
 
 
         ''' Model '''

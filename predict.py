@@ -30,7 +30,7 @@ def prepare_data(datasets,w2i_char):
             try:
                 index = w2i_char[char]
             except:
-                index = w2i_char["[UNK]"]
+                index = w2i_char["UNK"]
 
             seq_line.append(index)
 
@@ -42,7 +42,7 @@ def prepare_data(datasets,w2i_char):
 
         # Padding,利用了python的那个特性
         for seq in output_datasets:
-            seq.extend([w2i_char["[PAD]"]] * (max_seq_len - len(seq)))
+            seq.extend([w2i_char["PAD"]] * (max_seq_len - len(seq)))
 
 
     return (np.array(output_datasets, dtype="int32"),
@@ -81,19 +81,18 @@ if __name__ == "__main__":
     w2i_bio, i2w_bio = load_vocabulary(Configs.label_vocab_path)
 
     # 输入一堆句子
-    data = ["我爱你真的很爱你"]
-
+    data = ["李华爱北京天安门"]
 
     # 句子转换格式
     predict_datasets, predict_length= prepare_data(data,w2i_char)
 
-    # print(predict_datasets)
+
 
     # 加载模型
 
     with tf.Session() as sess:
 
-        saver = tf.train.import_meta_graph(Configs.ckpt_save_dir+'model.ckpt.batch2-1.meta')
+        saver = tf.train.import_meta_graph(Configs.ckpt_save_dir+'model.ckpt.batch750-10176.meta')
         saver.restore(sess, tf.train.latest_checkpoint(Configs.ckpt_save_dir))
 
         g = tf.get_default_graph()
@@ -117,6 +116,7 @@ if __name__ == "__main__":
 
         label_output = index_to_label(output, i2w_bio)
 
+        print(data)
         print(label_output)
 
     # 结果输出

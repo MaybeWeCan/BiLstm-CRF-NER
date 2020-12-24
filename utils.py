@@ -32,9 +32,6 @@ def read_info(info_txt):
     return file_length
 
 
-# def get_feedd_dict():
-
-
 def get_batch(seq_data_path,label_data_path,batch_size,file_length,Configs):
 
 
@@ -63,7 +60,7 @@ def get_batch(seq_data_path,label_data_path,batch_size,file_length,Configs):
             max_seq_len = max(batch_seq_length)
 
             for seq in batch_seq:
-                seq.extend([Configs.w2i_char["[PAD]"]] * (max_seq_len - len(seq)))
+                seq.extend([Configs.w2i_char["PAD"]] * (max_seq_len - len(seq)))
 
             for seq in batch_label:
                 seq.extend([Configs.w2i_bio["O"]] * (max_seq_len - len(seq)))
@@ -143,6 +140,7 @@ class DataProcessor_LSTM(object):
 ####### extract_kvpairs_by_bio #######
 ######################################
 
+# {('ORG', '奥地利队')}
 def extract_kvpairs_in_bio(bio_seq, word_seq):
     assert len(bio_seq) == len(word_seq)
     pairs = set()
@@ -212,10 +210,76 @@ def cal_f1_score(preds, golds):
     f1 = 2 * p * r / (p + r) if (p + r) > 0 else 0
     return p, r, f1
 
+# 每一个类别的F1
+def cal_precision_and_recall(true_labels, pre_labels):
+    # 计算f1值
+    precision = defaultdict(int, 1)
+    recall = defaultdict(int, 1)
+    total = defaultdict(int, 1)
+
+    for t_lab, p_lab in zip(true_labels, pre_labels):
+        total[t_lab] += 1
+        recall[p_lab] += 1
+        if t_lab == p_lab:
+            precision[t_lab] += 1
+
+    for sub in precision.dict:
+        pre = precision[sub] / recall[sub]
+        rec = precision[sub] / total[sub]
+        F1 = (2 * pre * rec) / (pre + rec)
+        print(f"{str(sub)}  precision: {str(pre)}  recall: {str(rec)}  F1: {str(F1)}")
 
 
 
+# 每一个类别的F1
+def cal_precision_and_recall_single(true_labels, pre_labels):
+    # 计算f1值
+    precision = {}
+    recall = {}
+    total = {}
+    for i in range(len(true_labels)):
+        for t_lab, p_lab in zip(true_labels[i], pre_labels[i]):
 
+            # 计算真实类别内，每一个类别的总数
+            try:
+                total[t_lab] += 1
+            except:
+                total[t_lab] = 1
+
+            # 计算预测类别内，每一个类别的总数
+            try:
+                recall[p_lab] += 1
+            except:
+                recall[p_lab] = 1
+
+            # 计算每一个类别，预测对的个数
+            if t_lab == p_lab:
+                try:
+                    precision[t_lab] += 1
+                except:
+                    precision[t_lab] = 1
+
+    sub_list = []
+    pre_list = []
+    rec_list = []
+    f1_list =[]
+
+    for sub in precision.keys():
+
+        pre = precision[sub] / recall[sub]
+        rec = precision[sub] / total[sub]
+
+        sub_list.append(sub)
+        pre_list.append(pre)
+        rec_list.append(rec)
+
+    pre = np.mean(pre_list)
+    rec = np.mean(rec_list)
+
+    F1 = (2 * pre * rec) / (pre + rec)
+
+
+    return pre,rec,F1
             
 
 
