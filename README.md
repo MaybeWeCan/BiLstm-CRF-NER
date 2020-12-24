@@ -43,12 +43,17 @@ https://github.com/wavewangyue/ner
 （2）超参数
 
   dev_number = 5000
+  
   batch_size = 32
+  
   epoches = 20
+  
   embedding_dim = 300
+  
   hidden_dim = 300
 
   模型结构：1层Bilstm + CRF
+  
   优化方法： Adma
 
 
