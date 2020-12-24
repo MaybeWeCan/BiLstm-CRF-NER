@@ -3,7 +3,7 @@
 1. 原代码github
 https://github.com/wavewangyue/ner
 
-个人针对代码进行了调整，此处为第二个版本的Base_line
+  个人针对代码进行了调整，此处为第二个版本的Base_line
 
 二、运行
 
@@ -42,27 +42,19 @@ https://github.com/wavewangyue/ner
 
 （2）超参数
 
-  dev_number = 5000
-  
-  batch_size = 32
-  
-  epoches = 20
-  
-  embedding_dim = 300
-  
-  hidden_dim = 300
-
-  模型结构：1层Bilstm + CRF
-  
-  优化方法： Adma
+     dev_number = 5000
+     batch_size = 32
+     epoches = 20
+     embedding_dim = 300
+     hidden_dim = 300
+     模型结构：1层Bilstm + CRF
+     优化方法： Adma
 
 
 (3)模型训练loss结果：
 
 
-
-
-
+![Image text](https://github.com/MaybeWeCan/BiLstm-CRF-NER/blob/master/img/Image1.png)
 
 
 (4)最优的F1值：
@@ -72,6 +64,8 @@ https://github.com/wavewangyue/ner
 
 
 (5) 预测结果：
+
+![Image text](https://github.com/MaybeWeCan/BiLstm-CRF-NER/blob/master/img/Image2.png)
 
 
 
